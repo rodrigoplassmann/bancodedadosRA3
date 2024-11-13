@@ -337,6 +337,54 @@ def consultar_todas_tabelas():
         else:
             print("Nenhum pedido cadastrado.")
 
+#Álgebra relacional
+
+def selecionar_pratos_por_preco(preco_minimo):
+    with Session() as session:
+        pratos = session.query(Prato).filter(Prato.preco >= preco_minimo).all()
+        for prato in pratos:
+            print(f"{prato}")
+
+def projetar_clientes_nome_telefone():
+    with Session() as session:
+        clientes = session.query(Cliente.nome_cliente, Cliente.telefone).all()
+        for cliente in clientes:
+            print(f"Nome: {cliente.nome_cliente}, Telefone: {cliente.telefone}")
+
+def uniao_pratos_categoria(preco_minimo):
+    with Session() as session:
+        pratos = session.query(Prato).filter(Prato.preco >= preco_minimo).all()
+        categorias = session.query(Categoria).all()
+
+        # Exibindo pratos e categorias juntos (exemplo de união simples)
+        for prato in pratos:
+            print(f"Prato: {prato.nome_prato}, Preço: {prato.preco}")
+        for categoria in categorias:
+            print(f"Categoria: {categoria.nome_categoria}")
+
+def junção_clientes_pedidos():
+    with Session() as session:
+        pedidos = session.query(Pedido, Cliente, Prato).join(Cliente).join(Prato).all()
+        for pedido, cliente, prato in pedidos:
+            print(f"Pedido {pedido.id_pedido}: Cliente {cliente.nome_cliente}, "
+                  f"Prato {prato.nome_prato}, Data {pedido.data_pedido}")
+
+def diferença_pratos_nao_pedidos():
+    with Session() as session:
+        pratos = session.query(Prato).all()
+        pedidos = session.query(Pedido).all()
+
+        # Criar uma lista de IDs de pratos que já foram pedidos
+        pratos_pedidos = [pedido.id_prato for pedido in pedidos]
+
+        # Filtrar os pratos que não estão nos pedidos
+        pratos_nao_pedidos = [prato for prato in pratos if prato.id_prato not in pratos_pedidos]
+
+        for prato in pratos_nao_pedidos:
+            print(f"Prato não pedido: {prato.nome_prato}")
+
+
+
 #Funções para definir os menus para o usuário
 
 def exibir_menu():
@@ -346,6 +394,7 @@ def exibir_menu():
     print("3. Clientes")
     print("4. Pedidos")
     print("5. Consultar todas as tabelas")
+    print("6. Operações de álgebra relacional")
     print("0. Sair")
     opcao = input("Escolha uma opção: ")
     return opcao
@@ -384,6 +433,16 @@ def menu_pedido():
     print("3. Atualizar pedido")
     print("4. Excluir pedido")
     opcao = input("Escolha uma opção: ")
+    return opcao
+
+def menu_algebra_relacional():
+    print("--- MENU ÁLGEBRA RELACIONAL ---")
+    print("1. Selecionar pratos por preço")
+    print("2. Projeção de clientes (nome e telefone)")
+    print("3. União de pratos e categorias")
+    print("4. Junção de clientes e pedidos")
+    print("5. Diferença de pratos não pedidos")
+    opcao = input("Escolha uma operação: ")
     return opcao
 
 #Função para o menu principal
@@ -510,6 +569,21 @@ def main():
 
         elif opcao == '5': #Consultar todas as tabelas
             consultar_todas_tabelas()
+        
+        elif opcao == '6':  # Operações de álgebra relacional
+            operacao = menu_algebra_relacional()
+            if operacao == '1':  # Seleção por preço
+                preco = float(input("Digite o preço mínimo: "))
+                selecionar_pratos_por_preco(preco)
+            elif operacao == '2':  # Projeção de clientes
+                projetar_clientes_nome_telefone()
+            elif operacao == '3':  # União de pratos e categorias
+                preco_minimo = float(input("Digite o preço mínimo: "))
+                uniao_pratos_categoria(preco_minimo)
+            elif operacao == '4':  # Junção de clientes e pedidos
+                junção_clientes_pedidos()
+            elif operacao == '5':  # Diferença de pratos não pedidos
+                diferença_pratos_nao_pedidos()
 
         elif opcao == '0': #Sair
             print("Saindo")
