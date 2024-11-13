@@ -103,15 +103,19 @@ def criar_categoria(nome_categoria):
 
 def criar_prato(nome_prato, preco, id_categoria):
     with Session() as session:
-        novo_prato = Prato(nome_prato=nome_prato, preco=preco, id_categoria=id_categoria)
-        session.add(novo_prato)
-        try:
-            session.commit()
-            print("Prato criado com sucesso!")
-            return novo_prato
-        except Exception as e:
-            session.rollback()
-            print(f"Erro ao criar prato: {e}")
+        # Verificar se a categoria existe
+        categoria = session.query(Categoria).filter(Categoria.id_categoria == id_categoria).first()
+        if categoria:
+            novo_prato = Prato(nome_prato=nome_prato, preco=preco, id_categoria=id_categoria)
+            session.add(novo_prato)
+            try:
+                session.commit()
+                print(f"Prato '{nome_prato}' criado com sucesso!")
+            except Exception as e:
+                session.rollback()
+                print(f"Erro ao criar prato: {e}")
+        else:
+            print(f"Categoria com ID {id_categoria} não encontrada. Não é possível criar o prato.")
 
 def criar_cliente(nome_cliente, telefone):
      with Session() as session:
@@ -127,15 +131,24 @@ def criar_cliente(nome_cliente, telefone):
 
 def criar_pedido(id_cliente, id_prato, data_pedido):
     with Session() as session:
-        novo_pedido = Pedido(id_cliente=id_cliente, id_prato=id_prato, data_pedido=data_pedido)
-        session.add(novo_pedido)
-        try:
-            session.commit()
-            print("Pedido criado com sucesso!")
-            return novo_pedido
-        except Exception as e:
-            session.rollback()
-            print(f"Erro ao criar pedido: {e}")
+        # Verificar se o cliente existe
+        cliente = session.query(Cliente).filter(Cliente.id_cliente == id_cliente).first()
+        if cliente:
+            prato = session.query(Prato).filter(Prato.id_prato == id_prato).first()
+            if prato:
+                novo_pedido = Pedido(id_cliente=id_cliente, id_prato=id_prato, data_pedido=data_pedido)
+                session.add(novo_pedido)
+                try:
+                    session.commit()
+                    print(f"Pedido criado com sucesso!")
+                except Exception as e:
+                    session.rollback()
+                    print(f"Erro ao criar pedido: {e}")
+            else:
+                print(f"Prato com ID {id_prato} não encontrado.")
+        else:
+            print(f"Cliente com ID {id_cliente} não encontrado.")
+
 
 #Ler um registro pela ID
 
