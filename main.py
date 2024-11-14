@@ -37,11 +37,9 @@ class Categoria(Base):
 
     id_categoria = Column(Integer, primary_key=True, autoincrement=True)
     nome_categoria = Column(String, nullable=False)
-
-    #Relacionamento 1 para N com prato
+    
     pratos = relationship("Prato", back_populates="categoria")
-
-    #Representação da classe de maneira legível
+    
     def __repr__(self):
         return f"<Categoria(id={self.id_categoria}, nome={self.nome_categoria})>"
 
@@ -53,7 +51,6 @@ class Prato(Base):
     preco = Column(Integer, nullable=False)
     id_categoria = Column(Integer, ForeignKey('categorias.id_categoria'))
 
-    #Relacionamento com a categoria
     categoria = relationship("Categoria", back_populates="pratos")
 
     def __repr__(self):
@@ -223,82 +220,110 @@ def atualizar_categoria(id_categoria, nome_categoria):
 
 def atualizar_prato(id_prato, nome_prato=None, preco=None, id_categoria=None):
     with Session() as session:
-        prato = session.query(Prato).filter_by(id_prato=id_prato).first()
-        if prato:
-            if nome_prato is not None:
-                prato.nome_prato = nome_prato
-            if preco is not None:
-                prato.preco = preco
-            if id_categoria is not None:
-                prato.id_categoria = id_categoria
-            session.commit()
-        return prato
+        try:
+            prato = session.query(Prato).filter_by(id_prato=id_prato).first()
+            if prato:
+                if nome_prato is not None:
+                    prato.nome_prato = nome_prato
+                if preco is not None:
+                    prato.preco = preco
+                if id_categoria is not None:
+                    prato.id_categoria = id_categoria
+                session.commit()
+            return prato
+        except Exception as e:
+            session.rollback()
+            print(f"Erro ao atualizar prato: {e}")
 
 def atualizar_cliente(id_cliente, nome_cliente=None, telefone=None):
     with Session() as session:
-        cliente = session.query(Cliente).filter_by(id_cliente=id_cliente).first()
-        if cliente:
-            if nome_cliente is not None:
-                cliente.nome_cliente = nome_cliente
-            if telefone is not None:
-                cliente.telefone = telefone
-            session.commit()
-        return cliente
+        try:
+            cliente = session.query(Cliente).filter_by(id_cliente=id_cliente).first()
+            if cliente:
+                if nome_cliente is not None:
+                    cliente.nome_cliente = nome_cliente
+                if telefone is not None:
+                    cliente.telefone = telefone
+                session.commit()
+            return cliente
+        except Exception as e:
+            session.rollback()
+            print(f"Erro ao atualizar cliente: {e}")
 
 def atualizar_pedido(id_pedido, id_cliente=None, id_prato=None, data_pedido=None):
     with Session() as session:
-        pedido = session.query(Pedido).filter_by(id_pedido=id_pedido).first()
-        if pedido:
-            if id_cliente is not None:
-                pedido.id_cliente = id_cliente
-            if id_prato is not None:
-                pedido.id_prato = id_prato
-            if data_pedido is not None:
-                pedido.data_pedido = data_pedido
-            session.commit()
-        return pedido
+        try:
+            pedido = session.query(Pedido).filter_by(id_pedido=id_pedido).first()
+            if pedido:
+                if id_cliente is not None:
+                    pedido.id_cliente = id_cliente
+                if id_prato is not None:
+                    pedido.id_prato = id_prato
+                if data_pedido is not None:
+                    pedido.data_pedido = data_pedido
+                session.commit()
+            return pedido
+        except Exception as e:
+            session.rollback()
+            print(f"Erro ao atualizar pedido: {e}")
 
 #Excluir
 
 def excluir_categoria(id_categoria):
     with Session() as session:
-        categoria = session.query(Categoria).filter_by(id_categoria=id_categoria).first()
-        if categoria:
-            session.delete(categoria)
-            session.commit()
-            print(f"Categoria {id_categoria} excluída com sucesso.")
-        else:
-            print(f"Categoria com ID {id_categoria} não encontrada.")
+        try:
+            categoria = session.query(Categoria).filter_by(id_categoria=id_categoria).first()
+            if categoria:
+                session.delete(categoria)
+                session.commit()
+                print(f"Categoria {id_categoria} excluída com sucesso.")
+            else:
+                print(f"Categoria com ID {id_categoria} não encontrada.")
+        except Exception as e:
+            session.rollback()
+            print(f"Erro ao excluir categoria: {e}")
 
 def excluir_prato(id_prato):
     with Session() as session:
-        prato = session.query(Prato).filter_by(id_prato=id_prato).first()
-        if prato:
-            session.delete(prato)
-            session.commit()
-            print(f"Prato {id_prato} excluído com sucesso.")
-        else:
-            print(f"Prato com ID {id_prato} não encontrado.")
+        try:
+            prato = session.query(Prato).filter_by(id_prato=id_prato).first()
+            if prato:
+                session.delete(prato)
+                session.commit()
+                print(f"Prato {id_prato} excluído com sucesso.")
+            else:
+                print(f"Prato com ID {id_prato} não encontrado.")
+        except Exception as e:
+            session.rollback()
+            print(f"Erro ao excluir prato: {e}")
 
 def excluir_cliente(id_cliente):
     with Session() as session:
-        cliente = session.query(Cliente).filter_by(id_cliente=id_cliente).first()
-        if cliente:
-            session.delete(cliente)
-            session.commit()
-            print(f"Cliente {id_cliente} excluído com sucesso.")
-        else:
-            print(f"Cliente com ID {id_cliente} não encontrado.")
+        try:
+            cliente = session.query(Cliente).filter_by(id_cliente=id_cliente).first()
+            if cliente:
+                session.delete(cliente)
+                session.commit()
+                print(f"Cliente {id_cliente} excluído com sucesso.")
+            else:
+                print(f"Cliente com ID {id_cliente} não encontrado.")
+        except Exception as e:
+            session.rollback()
+            print(f"Erro ao excluir cliente: {e}")
 
 def excluir_pedido(id_pedido):
     with Session() as session:
-        pedido = session.query(Pedido).filter_by(id_pedido=id_pedido).first()
-        if pedido:
-            session.delete(pedido)
-            session.commit()
-            print(f"Pedido {id_pedido} excluído com sucesso.")
-        else:
-            print(f"Pedido com ID {id_pedido} não encontrado.")
+        try:
+            pedido = session.query(Pedido).filter_by(id_pedido=id_pedido).first()
+            if pedido:
+                session.delete(pedido)
+                session.commit()
+                print(f"Pedido {id_pedido} excluído com sucesso.")
+            else:
+                print(f"Pedido com ID {id_pedido} não encontrado.")
+        except Exception as e:
+            session.rollback()
+            print(f"Erro ao excluir pedido: {e}")
 
 #Função para consultar todas as tabelas
 
