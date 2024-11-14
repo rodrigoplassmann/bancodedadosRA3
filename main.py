@@ -479,9 +479,8 @@ def menu_algebra_relacional():
     print("--- MENU ÁLGEBRA RELACIONAL ---")
     print("1. Selecionar pratos por preço")
     print("2. Projeção de clientes (nome e telefone)")
-    print("3. União de pratos e categorias")
-    print("4. Junção de clientes e pedidos")
-    print("5. Diferença de pratos não pedidos")
+    print("3. Junção de clientes e pedidos")
+    print("4. Diferença de pratos não pedidos")
     opcao = input("Escolha uma operação: ")
     return opcao
 
@@ -617,12 +616,9 @@ def main():
                 selecionar_pratos_por_preco(preco)
             elif operacao == '2':  # Projeção de clientes
                 projetar_clientes_nome_telefone()
-            elif operacao == '3':  # União de pratos e categorias
-                preco_minimo = float(input("Digite o preço mínimo: "))
-                uniao_pratos_categoria(preco_minimo)
-            elif operacao == '4':  # Junção de clientes e pedidos
+            elif operacao == '3':  # Junção de clientes e pedidos
                 junção_clientes_pedidos()
-            elif operacao == '5':  # Diferença de pratos não pedidos
+            elif operacao == '4':  # Diferença de pratos não pedidos
                 diferença_pratos_nao_pedidos()
 
         elif opcao == '0': #Sair
