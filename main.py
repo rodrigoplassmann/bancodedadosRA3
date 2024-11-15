@@ -382,20 +382,6 @@ def projetar_clientes_nome_telefone():
         except Exception as e:
             print(f"Erro ao projetar nome e telefone dos clientes: {e}")
 
-def uniao_pratos_categoria(preco_minimo):
-    with Session() as session:
-        try:
-            pratos = session.query(Prato).filter(Prato.preco >= preco_minimo).all()
-            categorias = session.query(Categoria).all()
-
-            # Exibindo pratos e categorias juntos (exemplo de união simples)
-            for prato in pratos:
-                print(f"Prato: {prato.nome_prato}, Preço: {prato.preco}")
-            for categoria in categorias:
-                print(f"Categoria: {categoria.nome_categoria}")
-        except Exception as e:
-            print(f"Erro ao realizar união entre pratos e categorias: {e}")
-
 def junção_clientes_pedidos():
     with Session() as session:
         try:
@@ -412,10 +398,8 @@ def diferença_pratos_nao_pedidos():
             pratos = session.query(Prato).all()
             pedidos = session.query(Pedido).all()
 
-            # Criar uma lista de IDs de pratos que já foram pedidos
             pratos_pedidos = [pedido.id_prato for pedido in pedidos]
 
-            # Filtrar os pratos que não estão nos pedidos
             pratos_nao_pedidos = [prato for prato in pratos if prato.id_prato not in pratos_pedidos]
 
             for prato in pratos_nao_pedidos:
